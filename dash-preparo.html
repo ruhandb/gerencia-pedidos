@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#dddce1">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <title>Retro Sport Pub</title>
+    <link rel="shortcut icon" href="images/favicon.png" />
+    <link rel="manifest" href="/retro-sport-pub/manifest.json">
+    <link rel="stylesheet" href="css/style.css">
+
+    <script>
+        var CLIENTE = 'retro-sports-bar';
+    </script>
+    <script src="js/script.js"></script>
+    <style>
+        .button-menu-mobile{
+            border: 0;
+            color: inherit;
+            font-size: 1.25rem;
+            padding: 0;
+            border-radius: 0;
+            background-color: transparent;
+        }
+        @media (max-width: 991px) {
+            .hide-only-mobile{
+                display:none;
+            }
+            .show-only-mobile{
+                display:block;
+            }
+        }
+        @media (min-width: 992px) {
+            .hide-only-mobile{
+                display:block;
+            }
+            .show-only-mobile{
+                display:none;
+            }
+        }
+    
+    </style>
+</head>
+<body>
+    <div class="container-scroller" id="conteudo" v-cloak>
+        <!-- partial:partials/_navbar.html -->
+        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                <a class="navbar-brand brand-logo" href="index.html">
+                    <img src="images/logo-retro-55.png" style="width: 199px; height: 55px;"
+                        alt="logo" /></a>
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+               
+                <button class="hide-only-mobile button-menu-mobile align-self-center" @click="fullScreen" type="button">
+                    <span class="fas fa-arrows-alt"></span>
+                </button>
+            </div>
+        </nav>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <div class="main-panel" style="width: 100%">
+                <div class="content-wrapper">
+                    <div class="row">
+                        <div class="col-sm-6 col-md-4 col-lg-3 grid-margin stretch-card" 
+                             v-for="(pedido, key) in pedidosAtendimento"
+                             v-if="pedidoNecessitaPreparo(pedido)">
+                            <div class="card" :id="key">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                        <p class="card-title text-xl-left">
+                                             {{ pedido.fromNow }} - {{ pedido.dhPedido | formatTime }}
+                                        </p>
+                                        <p class="card-title text-xl-left">
+                                            {{ pedido.comanda }}
+                                        </p>
+                                    </div>
+                                    <div class="d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                        <h3 class="mb-0 mb-xl-0 order-xl-0">{{ pedido.id }}</h3>
+                                        <h3 class="text-muted mb-0 mb-xl-0">{{ pedido.mesa }}</h3>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-start flex-grow-1">
+                                        <div class="d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center"
+                                             v-for="(item, k) in pedido.items"
+                                             v-if="item.preparo == 'S'">
+                                            <p class="mb-0 mt-2">
+                                                {{ item.qtd }} {{ item.desc }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-right-0 border-left-0 border-bottom-0 text-align: right;">
+                                    <div class="d-flex justify-content-end">
+                                        <p class="text-muted m-auto">
+                                            {{getUserName(pedido.uidAtendimento)}}
+                                        </p>
+                                        <button @click="donePedido(key)" type="button"
+                                            class="btn btn-inverse-success btn-icon rounded-0 border-0 ">
+                                            <i class="ti-check"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- content-wrapper ends -->
+                <!-- partial:partials/_footer.html -->
+                <footer class="footer">
+                    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                        <span
+                            class="float-none float-sm-right text-muted text-center text-sm-left d-block d-sm-inline-block"></span>
+                        <span class="float-none float-sm-right text-muted d-block mt-1 mt-sm-0 text-center">Copyright ©
+                            2019 <a href="https://www.afoxsoftware.com.br/" target="_blank">AFox Software</a>. Todos
+                            direitos reservados.</span>
+                    </div>
+                </footer>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    </div>
+    
+    <script src="index.js"></script>
+    
+</body>
+
+</html>

@@ -1,1 +1,1450 @@
-<div id="app"></div>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#dddce1">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <title>Retro Sport Pub</title>
+    <link rel="shortcut icon" href="images/favicon.png" />
+    <link rel="manifest" href="/retro-sport-pub/manifest.json">
+    <link rel="stylesheet" href="css/style.css">
+    <!--script>
+    window.fbAsyncInit = function() {
+        FB.init({
+        appId            : '2275569875997125',
+        autoLogAppEvents : true,
+        xfbml            : true,
+        version          : 'v3.3'
+        });
+    };
+    </script>
+    <script async defer src="https://connect.facebook.net/en_US/sdk.js"></script-->
+
+    <script>
+        var CLIENTE = 'retro-sports-bar';
+    </script>
+    <script src="js/script.js?2019"></script>    
+
+    <style>
+        .button-menu-mobile{
+            border: 0;
+            color: inherit;
+            font-size: 1.25rem;
+            padding: 0;
+            border-radius: 0;
+            background-color: transparent;
+        }
+        @media (max-width: 991px) {
+            .hide-only-mobile{
+                display:none;
+            }
+            .show-only-mobile{
+                display:block;
+            }
+        }
+        @media (min-width: 992px) {
+            .hide-only-mobile{
+                display:block;
+            }
+            .show-only-mobile{
+                display:none;
+            }
+        }
+
+        .fixed-header {
+            overflow-y: auto;
+
+            overflow-x: hidden;
+
+            max-height: 40vh;
+        }
+
+        .fixed-header table {
+            border-collapse:  separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        .fixed-header thead th {
+            position: sticky;
+            top: -0px;
+            background: #eee;
+        }
+        .fixed-header tfoot th {
+            position: sticky;
+            bottom: -0px;
+            background: #eee;
+        }
+        .fixed-header tbody tr:first-child td {
+            border-top-width: 0px;
+        }
+
+        .mobile-card {
+            
+            margin-top: -20px;
+            margin-left: -20px;
+            margin-right: -20px;
+        }
+
+        .fixed-botton-margin {
+            margin-bottom: 45vh;
+        }
+    
+    </style>
+</head>
+<body>
+    <div class="container-scroller" id="conteudo" v-cloak>
+        <!-- partial:partials/_navbar.html -->
+        <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <div style="height: 63px" class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+                <a class="navbar-brand brand-logo" href="index.html">
+                    <img src="images/logo-retro-55.png" style="width: 199px; height: 55px;"
+                        alt="logo" /></a>
+                <a class="navbar-brand brand-logo-mini" href="index.html" >
+                    <img src="images/logo-mini.png" style="width: 55px; height: 55px;"  class="ml-2"
+                        alt="logo" /></a>
+            </div>
+            <div style="height: 63px" class="navbar-menu-wrapper d-flex align-items-center justify-content-between">
+                <button class="navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <span class="ti-view-list"></span>
+                </button>
+                <button type="button" class="btn btn-sm btn-success btn-icon-text hide-only-mobile" 
+                    @click="openDashCliente">
+                    <i class="fas fa-external-link-alt btn-icon-prepend"></i>Dashboard Cliente
+                </button>
+                <button type="button" class="btn btn-sm btn-success btn-icon-text hide-only-mobile" 
+                    @click="openDashPreparo">
+                    <i class="fas fa-external-link-alt btn-icon-prepend"></i>Dashboard Cozinha
+                </button>
+
+                <button type="button" class="btn btn-sm btn-primary btn-icon-text" @click="clearPedido()"
+                        data-toggle="tooltip" data-placement="bottom" title="Alt + P">
+                    <i class="ti-notepad btn-icon-prepend"></i>Pedido
+                </button>
+                
+                <button class="hide-only-mobile button-menu-mobile align-self-center" @click="fullScreen" type="button">
+                    <span class="fas fa-arrows-alt"></span>
+                </button>
+                <ul class="navbar-nav ">
+                    <li class="nav-item nav-profile dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown" aria-expanded="false">
+                            <img :src="getProfilePicture(acessoUsuarios[user.uid])" alt="profile">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                            <a class="dropdown-item">
+                                <i class="ti-settings text-primary"></i>
+                                Settings
+                            </a>
+                            <a class="dropdown-item">
+                                <i class="ti-power-off text-primary"></i>
+                                Logout
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <button class="show-only-mobile button-menu-mobile align-self-center" @click="page.showMenuMobile = !page.showMenuMobile" type="button">
+                    <span class="ti-view-list"></span>
+                </button>
+            </div>
+        </nav>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper" style="padding-top: 63px">
+            <!-- partial:partials/_sidebar.html -->
+            <nav class="sidebar sidebar-offcanvas" :class="page.showMenuMobile?'active':''" id="sidebar">
+                <ul class="nav">
+                    <li v-for="(menu, key) in page.menus" 
+                        v-if="showMenu(menu, key)" 
+                        @click="goToView(key); page.showMenuMobile = false;"
+                        class="nav-item" :class="page.selected == key ? 'active' : ''">
+                        <a class="nav-link" :href="'#' + key">
+                            <i style="width: 16px; align-items: center" class="menu-icon" :class="menu.icon"></i>
+                            <span class="menu-title" style="margin-top:0px">{{ menu.desc }}</span>
+                        </a>
+                    </li>
+                    <li @click="logout" class="nav-item"
+                    data-toggle="tooltip" data-placement="top" title="Alt + L">
+                        <a class="nav-link " href="#">
+                            <i style="width: 16px; align-items: center" class="menu-icon fas fa-sign-out-alt"></i>
+                            <span class="menu-title" style="margin-top:0px">Logout</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper">
+
+                    <div v-if="message.show" :class="message.class" class="alert alert-dismissible show-only-mobile mobile-card" role="alert">
+                        {{ message.text }}
+                        <button type="button" class="close" @click="message.show=false" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div v-if="message.show" :class="message.class" class="alert alert-dismissible hide-only-mobile" role="alert">
+                        {{ message.text }}
+                        <button type="button" class="close" @click="message.show=false" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    
+                    <template v-if="page.selected == 'novoPedido' || page.selected == 'editarPedido'">
+                        <div class="mobile-card show-only-mobile">
+                            <div class="grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body pb-2" >
+                                        <h4 v-if="page.selected == 'novoPedidoMobile'" class="card-title">Novo Pedido</h4>
+                                        <h4 v-if="page.selected == 'editarPedidoMobile'" class="card-title">Editar Pedido</h4>
+                                        <form>
+                                            <div class="form-row" v-if="sim(config.comanda)">
+                                                <div class="col-md-12 form-group">
+                                                    <label>Comanda</label>
+                                                    <input ref="comanda" v-model="novoPedido.comanda" placeholder="Comanda" type="text"
+                                                        @blur="loadComanda" class="form-control text-center">
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-md-6 form-group">
+                                                    <label>Mesa</label>
+                                                    <input ref="mesa" v-model="novoPedido.mesa" placeholder="Mesa" type="text"
+                                                        class="form-control text-center">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Nome</label>
+                                                    <input v-model="novoPedido.id" placeholder="Nome" type="text"
+                                                        class="form-control text-center">
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fixed-bottom show-only-mobile">
+                            <div class="col-md-12 grid-margin stretch-card mb-1 pl-1 pr-1">
+                                <div class="card">
+                                    <div class="card-body p-0" >
+                                        <div class="form-row p-0 m-0">
+                                            <div class="btn-group w-100" role="group">
+                                                <button @click="goToView('atendimento')"
+                                                    class="btn btn-sm btn-light btn-icon-text w-25"><i class="ti-close"></i>
+                                                </button>
+                                                <button @click="goToView('itensPedidoMobile')" class="btn btn-sm btn-primary w-75">
+                                                    Adicionar Itens
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div  class="row justify-content-center hide-only-mobile">
+                            <div class="col-md-12 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body pb-2" >
+                                        <h4 v-if="page.selected == 'novoPedido'" class="card-title">Novo Pedido</h4>
+                                        <h4 v-if="page.selected == 'editarPedido'" class="card-title">Editar Pedido</h4>
+    
+                                        <form>
+                                            <div v-if="novoPedido.error != ''" class="form-row">
+                                                <div class="form-group col-md-12">
+                                                    <div class="alert alert-danger" role="alert">
+                                                        {{ novoPedido.error }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-row" v-if="sim(config.comanda)">
+                                                    <div class="col-md-12 form-group">
+                                                        <input ref="comanda" v-model="novoPedido.comanda" placeholder="Comanda" type="text"
+                                                            @blur="loadComanda" class="form-control text-center">
+                                                    </div>
+                                                </div>
+                                            <div class="form-row">
+                                                <div class="col-md-6 form-group">
+                                                    <input ref="mesa" v-model="novoPedido.mesa" placeholder="Mesa" type="text"
+                                                        class="form-control text-center">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <input v-model="novoPedido.id" placeholder="Identificação" type="text"
+                                                        class="form-control text-center">
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-md-10  form-group">
+                                                    <div class="input-group">
+                                                        <select v-model="itemPedido.prod" class="form-control"
+                                                            style="color:black">
+                                                            <optgroup :label="key" v-for="(categoria, key) in produtos">
+                                                                <option v-for="(prod, kprod) in categoria"
+                                                                    v-if="prod.disponivel == 'S'" v-bind:value="prod">
+                                                                    {{ prod.valor | moeda }} - {{ prod.desc }}</option>
+                                                            </optgroup>
+                                                        </select>
+                                                        <select v-model="itemPedido.qtd" class="form-control"
+                                                            style="max-width: 20%; color:black">
+                                                            <option>1</option>
+                                                            <option>2</option>
+                                                            <option>3</option>
+                                                            <option>4</option>
+                                                            <option>5</option>
+                                                            <option>6</option>
+                                                            <option>7</option>
+                                                            <option>8</option>
+                                                            <option>9</option>
+                                                            <option>10</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2 form-group">
+                                                    <button @click="addItemPedido" type="button"
+                                                        class="btn btn-primary btn-block">
+                                                        <span class="ti-plus"></span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="form-group col-md-12">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Item</th>
+                                                                <th scope="col" class="text-right">Valor</th>
+                                                                <th scope="col" style="width: 20px"></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(item, k) in novoPedido.items">
+                                                                <td>{{ item.qtd }} {{ item.desc }}</td>
+                                                                <td class="text-right">{{ item.valor * item.qtd | moeda }}
+                                                                </td>
+                                                                <td class="text-center py-1" style="width: 20px">
+                                                                    <button @click="removeItemPedido(k)" type="button"
+                                                                        class="btn btn-sm btn-danger">
+                                                                        <i class="ti-close"></i>
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th class="text-right">TOTAL</th>
+                                                                <th class="text-right">
+                                                                    {{ totalPedido(novoPedido.items) | moeda }}</th>
+                                                                <th class="text-right"></th>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <a href="#" @click="addPedido" class="btn btn-primary mr-2 mb-2">
+                                                    {{ page.selected == 'novoPedido' ? 'Efetuar Pedido' : 'Alterar Pedido' }}
+                                                </a>
+                                                <a href="#" @click="page.selected = 'atendimento'"
+                                                    class="btn btn-light mb-2">Cancelar</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-if="page.selected == 'itensPedidoMobile' || page.selected == 'editarItensPedidoMobile'">
+                        <div class="card mobile-card" style="margin-bottom: 22px">
+                            <div class="card-header d-flex flex-column">
+                                <div class="d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                    <p class="card-title text-xl-left" style="margin:0px">
+                                        {{ novoPedido.mesa }} - {{ novoPedido.id }}
+                                    </p>
+                                    <p class="card-title text-xl-left" style="margin:0px">
+                                        {{ novoPedido.comanda }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="accordion" class="mobile-card fixed-botton-margin">
+                            <div class="card" v-for="(categoria, key) in produtos">
+                                <div class="card-header" data-toggle="collapse" :href="'#' + key" style="cursor: pointer">
+                                    <a class="card-link" data-toggle="collapse" :href="'#' + key">
+                                        {{key}}
+                                    </a>
+                                </div>
+                                <div :id="key" class="collapse" data-parent="#accordion">
+                                    <div class="card-body p-0">
+                                        <table class="table table-striped" >
+                                            <tbody >
+                                                <tr v-if="prod.disponivel == 'S'" v-for="(prod, kprod) in categoria">
+                                                    <td class="text-center p-1 " style="width: 20px">
+                                                        <button @click="addItemPedidoMobile(key,kprod)" type="button"
+                                                            style="width: 32px; height: 32px;" 
+                                                            class="btn btn-inverse-success btn-icon">
+                                                            <i class="ti-plus"></i>
+                                                        </button>
+                                                    </td>
+                                                    <td class="p-2">{{ prod.desc }}</td>
+                                                    <td class="text-right p-2">{{ prod.valor | moeda }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fixed-bottom">
+                            <div class="col-md-12 grid-margin stretch-card mb-1 pl-1 pr-1">
+                                <div class="card">
+                                    <div class="card-body p-0" >
+                                        <div class="form-row p-0 m-0">
+                                            <div class="form-group col-md-12 p-0 m-0 fixed-header">
+                                                <table class="table table-striped" >
+                                                    <thead v-if="page.expandedItems" class="thead-dark">
+                                                        <tr @click="page.expandedItems = false">
+                                                            <th class="p-2">
+                                                                <i class="ti-angle-double-down"></i>
+                                                            </th>
+                                                            <th class="p-2" >Item</th>
+                                                            <th class="text-right p-2" >Valor</th>                                                                
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody v-if="page.expandedItems">
+                                                        <tr v-for="(item, k) in novoPedido.items">
+                                                            <td class="text-center p-1 " style="width: 20px">
+                                                                <button @click="removeItemPedido(k)" type="button"
+                                                                    style="width: 32px; height: 32px;" 
+                                                                    class="btn btn-inverse-danger btn-icon">
+                                                                    <i class="ti-close"></i>
+                                                                </button>
+                                                            </td>
+                                                            <td class="p-2" style="max-width: 50vw;overflow: hidden;
+                                                            text-overflow: ellipsis;
+                                                            white-space: nowrap;" >
+                                                                {{ item.qtd }} {{ item.desc }}
+                                                            </td>
+                                                            <td class="text-right p-2">{{ item.valor * item.qtd | moeda }}
+                                                            </td>
+                                                            
+                                                        </tr>
+                                                    </tbody>
+                                                    <tfoot class="thead-dark" style="font-size: .875rem;">
+                                                        <tr @click="page.expandedItems = true">
+                                                            <th class="p-2" >
+                                                                <i v-if="!page.expandedItems" class="ti-angle-double-up" style="margin-left: 0.325rem;"></i>
+                                                            </th>
+                                                            <th class="text-right p-2">TOTAL</th>
+                                                            <th class="text-right p-2">
+                                                                {{ totalPedido(novoPedido.items) | moeda }}</th>                                                                
+                                                        </tr>
+                                                    </tfoot>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="form-row p-0 m-0">
+                                            <div class="btn-group w-100" role="group">
+                                                <button @click="goToView('novoPedido')"
+                                                    class="btn btn-sm btn-light btn-icon-text w-25"><i class="ti-arrow-left"></i>
+                                                </button>
+                                                <button @click="addPedido" class="btn btn-sm btn-primary w-75">
+                                                    Salvar Pedido
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div v-if="page.selected == 'atendimento'" class="row">
+                        <div class="col-md-4 grid-margin stretch-card" v-for="(pedido, key) in pedidosAtendimento">
+                            <div class="card" :id="key">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                        <p class="card-title text-xl-left">
+                                             {{ pedido.fromNow }} - {{ pedido.dhPedido | formatTime }}
+                                        </p>
+                                        <p class="card-title text-xl-left">
+                                            {{ pedido.comanda }}
+                                        </p>
+                                    </div>
+                                    <div class="d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                        <h3 class="mb-0 mb-md-2 mb-xl-0 order-xl-0">{{ pedido.id }}</h3>
+                                        <h3 class="text-muted mb-0 mb-md-3 mb-xl-0">{{ pedido.mesa }}</h3>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-start flex-grow-1">
+                                        <div v-for="(item, k) in pedido.items" class="d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                            <p class="mb-0 mt-2">
+                                                {{ item.qtd }} {{ item.desc }}</p>
+                                            <p class="mb-0 mt-2 text-danger">
+                                                {{ item.valor * item.qtd | moeda }}</p>
+                                        </div>
+                                        <div class="border-top font-weight-bold mt-auto d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                            <p class="mb-0 mt-2">
+                                                TOTAL</p>
+                                            <p class="mb-0 mt-2 text-danger">
+                                                {{ totalPedido(pedido.items) | moeda }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-right-0 border-left-0 border-bottom-0 text-align: right;">
+                                    <div class="d-flex justify-content-end">
+                                        <p class="text-muted text-xl-left m-auto">
+                                            {{getUserName(pedido.uidAtendimento)}}
+                                        </p>
+                                        <button @click="editPedido(key)"
+                                            type="button"
+                                            class="btn btn-inverse-primary btn-icon rounded-0 border-0 ">
+                                            <i class="ti-pencil-alt"></i>
+                                        </button>
+                                        <button @click="cancelPedido(pedidosAtendimento,'atendendo', key)"
+                                            type="button"
+                                            class="btn btn-inverse-danger btn-icon rounded-0 border-0">
+                                            <i class="ti-trash"></i>
+                                        </button>
+                                        <button @click="donePedido(key)" type="button"
+                                            class="btn btn-inverse-success btn-icon rounded-0 border-0">
+                                            <i class="ti-check"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="page.selected == 'disponiveis'" class="row">
+                        <div class="col-md-4 grid-margin stretch-card" v-for="(pedido, key) in pedidosDisponiveis">
+                            <div class="card" style="background-color: rgb(221, 255, 183);" :id="key">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                        <p class="card-title text-xl-left">
+                                            {{ pedido.fromNow }} - {{ pedido.dhPedido | formatTime }}
+                                        </p>
+                                        <p class="card-title text-xl-left">
+                                            {{ pedido.comanda }}
+                                        </p>
+                                    </div>
+                                    <div class="d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                        <h3 class="mb-0 mb-md-2 mb-xl-0 order-xl-0">{{ pedido.id }}</h3>
+                                        <h3 class="text-muted mb-0 mb-md-3 mb-xl-0">{{ pedido.mesa }}</h3>
+                                    </div>
+                                    <div class="d-flex flex-column justify-content-start flex-grow-1">
+                                        <div v-for="(item, k) in pedido.items" class="d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                            <p class="mb-0 mt-2">
+                                                {{ item.qtd }} {{ item.desc }}</p>
+                                            <p class="mb-0 mt-2 text-danger">
+                                                {{ item.valor * item.qtd | moeda }}</p>
+                                        </div>
+                                        <div class="border-top font-weight-bold mt-auto d-flex flex-wrap justify-content-between justify-content-xl-between align-items-center">
+                                            <p class="mb-0 mt-2">
+                                                TOTAL</p>
+                                            <p class="mb-0 mt-2 text-danger">
+                                                {{ totalPedido(pedido.items) | moeda }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-right-0 border-left-0 border-bottom-0 text-align: right;">
+                                    <div class="d-flex justify-content-end">
+                                        <p class="text-muted text-xl-left m-auto">
+                                            {{getUserName(pedido.uidDisponivel)}}
+                                        </p>
+                                        <button @click="notDonePedido(key)" type="button"
+                                            class="btn btn-inverse-warning btn-icon rounded-0 border-0 ">
+                                            <i class="ti-back-left"></i>
+                                        </button>
+                                        <button @click="cancelPedido(pedidosDisponiveis,'disponiveis', key)"
+                                            type="button"
+                                            class="btn btn-inverse-danger btn-icon rounded-0 border-0 ">
+                                            <i class="ti-trash"></i>
+                                        </button>
+                                        <button @click="finishedPedido(key)" type="button"
+                                            class="btn btn-inverse-success btn-icon rounded-0 border-0 ">
+                                            <i class="ti-check"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div v-if="page.selected == 'comanda'" class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="form-row">
+                                        <div class="col-md-12 form-group">
+                                            <label>Identificação</label>
+                                            <input v-model="comandasAbertas[editComandaKey].id" type="text"
+                                                disabled="disabled" class="form-control">                                                
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-4 form-group">
+                                            <label>Data/Hora Abertura</label>
+                                            <textarea class="form-control" disabled="disabled"
+                                                style="height: 46px; line-height: inherit; overflow:hidden; resize:none"
+                                                >{{ comandasAbertas[editComandaKey].dhAberto | formatDate }}</textarea>             
+                                        </div>
+                                        <div class="col-md-4 form-group">
+                                            <label>Comanda</label>
+                                            <input v-model="editComandaKey" type="text"
+                                                disabled="disabled" class="form-control">
+                                        </div>
+                                        <div class="col-md-4 form-group">
+                                            <label>Mesa</label>
+                                            <input v-model="comandasAbertas[editComandaKey].mesa" type="text"
+                                                disabled="disabled" class="form-control">
+                                        </div>                                
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="col-md-12 d-flex justify-content-end flex-row">
+                                            <a href="#" @click="page.selected = 'fecharComanda'"
+                                                class="btn btn-light mr-2">Cancelar</a>                                                
+                                            <a href="#" @click="encerrarComanda(editComandaKey)"
+                                                class="btn btn-primary ">Encerrar Comanda</a>
+                                        </div>
+                                    </div>    
+                                    <div class="table-responsive">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>                                                    
+                                                    <th >Ações</th>
+                                                    <th >Status</th>
+                                                    <th>Qtd</th>
+                                                    <th>Descrição</th>
+                                                    <th class="text-right">Valor</th>                                                    
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <template v-for="(valor, key) in comandasAbertas[editComandaKey].pedidos">
+                                                    <template v-if="pedidosAtendimento[key]">
+                                                        <tr v-for="(item, keyItem, index) in pedidosAtendimento[key].items"
+                                                            class="table-danger" >
+                                                            <td v-if="index == 0" :rowspan="Object.keys(pedidosAtendimento[key].items).length" style="padding:10px 15px">
+                                                                <div class="d-flex align-items-stretch">
+                                                                    <button @click="editPedido(key)"
+                                                                        type="button"
+                                                                        class="btn btn-inverse-primary btn-icon rounded-0 border-0 d-md-block">
+                                                                        <i class="ti-pencil-alt"></i>
+                                                                    </button>                                                              
+                                                                    <button @click="cancelPedido(pedidosAtendimento,'atendendo', key)"
+                                                                        type="button"
+                                                                        class="btn btn-inverse-danger btn-icon rounded-0 border-0 d-md-block">
+                                                                        <i class="ti-trash"></i>
+                                                                    </button>
+                                                                    <button @click="donePedido(key)" type="button"
+                                                                        class="btn btn-inverse-success btn-icon rounded-0 border-0 d-md-block">
+                                                                        <i class="ti-check"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                            <td v-if="index == 0" :rowspan="Object.keys(pedidosAtendimento[key].items).length">
+                                                                <label class="badge badge-danger">
+                                                                    Atendimento</label></td>
+                                                            <td>{{ item.qtd }}</td>
+                                                            <td>{{ item.desc }}</td>
+                                                            <td class="text-right">
+                                                                    {{ (item.valor * item.qtd) | moeda }}</td>
+                                                            
+                                                        </tr>
+                                                    </template>
+                                                    <template v-if="pedidosDisponiveis[key]">
+                                                        <tr v-for="(item, keyItem, index) in pedidosDisponiveis[key].items"
+                                                            class="table-warning" >
+                                                            <td v-if="index == 0" :rowspan="Object.keys(pedidosDisponiveis[key].items).length"  style="padding:10px 15px;">
+                                                                <div class="d-flex align-items-stretch">
+                                                                    <button @click="notDonePedido(key)" type="button"
+                                                                        class="btn btn-inverse-warning btn-icon rounded-0 border-0 d-md-block">
+                                                                        <i class="ti-back-left"></i>
+                                                                    </button>
+                                                                    <button @click="cancelPedido(pedidosDisponiveis,'disponiveis', key)"
+                                                                        type="button"
+                                                                        class="btn btn-inverse-danger btn-icon rounded-0 border-0 d-md-block">
+                                                                        <i class="ti-trash"></i>
+                                                                    </button>
+                                                                    <button @click="finishedPedido(key)" type="button"
+                                                                        class="btn btn-inverse-success btn-icon rounded-0 border-0 d-md-block">
+                                                                        <i class="ti-check"></i>
+                                                                    </button>
+                                                                </div>                                                                
+                                                            </td>                                                             
+                                                            
+                                                            <td v-if="index == 0" :rowspan="Object.keys(pedidosDisponiveis[key].items).length">
+                                                                <label class="badge badge-warning">
+                                                                    Disponível</label></td>
+                                                            <td>{{ item.qtd }}</td>
+                                                            <td>{{ item.desc }}</td>
+                                                            <td class="text-right">
+                                                                    {{ (item.valor * item.qtd) | moeda }}</td>
+                                                            
+                                                        </tr>
+                                                    </template>
+                                                    <template v-if="pedidosFinalizados[key]">
+                                                        <tr v-for="(item, keyItem, index) in pedidosFinalizados[key].items"
+                                                            class="table-info" >
+                                                            
+                                                            <td class="d-flex justify-content-end" style="padding:10px 15px"></td>
+                                                            
+                                                            <td v-if="index == 0" :rowspan="Object.keys(pedidosFinalizados[key].items).length">
+                                                                <label class="badge badge-info">
+                                                                    Finalizado</label></td>
+                                                            <td>{{ item.qtd }}</td>
+                                                            <td>{{ item.desc }}</td>
+                                                            <td class="text-right">
+                                                                    {{ (item.valor * item.qtd) | moeda }}</td>
+                                                            
+                                                        </tr>
+                                                    </template>
+                                                </template>
+                                            </tbody>
+                                            <tfoot>
+                                                <tr>
+                                                    <th colspan="4" class="text-right">Total</th>
+                                                    <th class="text-right">
+                                                        {{ totalComanda(comandasAbertas[editComandaKey].pedidos) | moeda }}
+                                                    </th>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="page.selected == 'fecharComanda'" class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <input v-model="filter.comanda" placeholder="Filtrar..." type="text"
+                                        class="form-control">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th>Comanda</th>
+                                                    <th>Mesa</th>
+                                                    <th>Ident.</th>
+                                                    <th>Data/Hora Abertura</th>
+                                                    <th class="text-right">Valor</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="(comanda, key) in comandasAbertas"
+                                                    v-if="key.toLowerCase().includes(filter.comanda.toLowerCase())"
+                                                    @click="editComandaKey = key; page.selected = 'comanda'">
+                                                    <td>{{ key }}</td>
+                                                    <td>{{ comanda.mesa }}</td>
+                                                    <td>{{ comanda.id }}</td>
+                                                    <td>{{ comanda.dhAberto | formatDate }}</td>
+                                                    <td class="text-right">
+                                                        {{ totalComanda(comanda.pedidos) | moeda }}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+
+                    <template v-if="page.selected == 'resumo'">
+                        <div class="row">
+                            <card-indicator title='Faturamento' icon='fas fa-coins' col='col-md-3'>
+                                {{ totalComandasResumo() | moeda}}
+                            </card-indicator>
+                            <card-indicator title='Comandas' icon='ti-notepad' col='col-md-3' >
+                                {{ Object.keys(comandasFinalizadas).length }}
+                            </card-indicator>
+                            <card-indicator title='Valor Médio Comanda' icon='ti-notepad' col='col-md-3' >
+                                {{ (totalComandasResumo() / Object.keys(comandasFinalizadas).length) | moeda }}
+                            </card-indicator>
+                            <card-indicator title='Tempo Atendimento Médio' icon='ti-timer' col='col-md-3' 
+                                            :current="resumoFinalizados.mediaTempoAtendimento" 
+                                            :last="lastFechamento.mediaTempoAtendimento"
+                                            :inverse="true">
+                                {{ resumoFinalizados.mediaTempoAtendimento | miliToMin }}
+                            </card-indicator>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="col-md-12 ">
+                                            <div class="d-flex justify-content-end align-items-center">
+                                                <div>
+                                                    <button @click="fechamentoNoite()" type="button"
+                                                        class="btn btn-success btn-icon-text btn-rounded">
+                                                        <i class="ti-clipboard btn-icon-prepend"></i>Fechamento
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <nav>
+                                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                                <a style="margin-bottom: -1px; color: #787878;"
+                                                    class="nav-item nav-link active card-title" id="nav-comanda-tab"
+                                                    data-toggle="tab" href="#nav-comanda" role="tab" aria-controls="nav-comanda"
+                                                    aria-selected="true">
+                                                    Comandas Fechadas
+                                                </a>
+                                                <a style="margin-bottom: -1px; color: #787878;"
+                                                    class="nav-item nav-link card-title" id="nav-home-tab"
+                                                    data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home"
+                                                    aria-selected="false">
+                                                    Pedidos Finalizados
+                                                </a>
+                                                <a style="margin-bottom: -1px; color: #787878;"
+                                                    class="nav-item nav-link card-title" id="nav-profile-tab"
+                                                    data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" 
+                                                    aria-selected="false">
+                                                    Produtos
+                                                </a>
+                                            </div>
+                                        </nav>
+                                        <div class="tab-content" id="nav-tabContent">
+                                            <div class="tab-pane fade show active" id="nav-comanda" role="tabpanel"
+                                                aria-labelledby="nav-comanda-tab">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Comanda</th>
+                                                                <th>Mesa - Identif.</th>
+                                                                <th>Hora Entrada</th>
+                                                                <th>Hora Saída</th>
+                                                                <th class="text-right">Valor</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(comanda, key) in comandasFinalizadas">
+                                                                <td>{{ comanda.comanda }}</td>
+                                                                <td>{{ comanda.mesa }} - {{ comanda.id }}</td>
+                                                                <td>{{ comanda.dhAberto | formatDate }}</td>
+                                                                <td>
+                                                                    {{ comanda.dhFinalizada | formatTime }}
+                                                                    ({{ tempoEspera(comanda.dhAberto, comanda.dhFinalizada) }})
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    {{ totalComanda(comanda.pedidos) | moeda }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th colspan="4" class="text-right">Total</th>
+                                                                <th class="text-right">{{ totalComandasResumo() | moeda}}</th>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="nav-home" role="tabpanel"
+                                                aria-labelledby="nav-home-tab">
+                                                <div class="table-responsive">
+                                                    <table class="table  table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Mesa - Identif.</th>
+                                                                <th>Data/Hora Pedido</th>
+                                                                <th>Hora Disponível</th>
+                                                                <th class="text-right">Valor</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(pedido, key) in pedidosFinalizados">
+                                                                <td>{{ pedido.mesa }} - {{ pedido.id }}</td>
+                                                                <td>{{ pedido.dhPedido | formatDate }}</td>
+                                                                <td>
+                                                                    {{ pedido.dhDisponivel | formatTime }}
+                                                                    ({{ tempoEspera(pedido.dhDisponivel, pedido.dhPedido) }})
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    {{ totalPedido(pedido.items) | moeda }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th colspan="3" class="text-right">Total</th>
+                                                                <th class="text-right">{{ totalFinalizados() | moeda}}</th>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                                                aria-labelledby="nav-profile-tab">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col">Produto</th>
+                                                                <th scope="col">Quantidade</th>
+                                                                <th scope="col" class="text-right">Valor</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(produto, key) in resumoFinalizados.produtos">
+                                                                <td>{{ produto.desc }}</td>
+                                                                <td>{{ produto.qtd }}</td>
+                                                                <td class="text-right">{{ produto.valor | moeda }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th class="text-right" colspan="2">TOTAL</th>
+                                                                <th class="text-right">{{ totalFinalizados() | moeda}}</th>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>                    
+                    <template v-if="page.selected == 'historico'">
+                        <div class="row">
+                            <div class="col-lg-12 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <div class="form-group col-md-6">
+                                            <label for="periodoIni">Período</label>
+                                            <div class="input-group">
+                                                <date-picker id="periodoIni" v-model="filter.dtIni"
+                                                    :config="filter.dtPickerOptions"></date-picker>
+                                                <div class="input-group-append input-group-prepend">
+                                                    <span class="input-group-text" id="basic-addon3">até</span>
+                                                </div>
+                                                <date-picker id="periodoFim" v-model="filter.dtFim"
+                                                    :config="filter.dtPickerOptions"></date-picker>
+                                                <div class="input-group-append">
+                                                    <button @click="filtrarHistorico()" type="button"
+                                                        class="btn btn-primary">
+                                                        <span class="ti-search"></span>&nbsp;&nbsp;Filtrar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <card-indicator title='Faturamento' icon='fas fa-coins' col='col-md-3'>
+                                {{ resumoHistorico.total | moeda }}
+                            </card-indicator>
+                            <card-indicator title='Comandas' icon='ti-notepad' col='col-md-3'>
+                                {{ Object.keys(comandasHistorico).length }}
+                            </card-indicator>
+                            <card-indicator title='Valor Médio Comanda' icon='ti-notepad' col='col-md-3' >
+                                {{ (resumoHistorico.total / Object.keys(comandasHistorico).length) | moeda }}
+                            </card-indicator>
+                            <card-indicator title='Tempo Atendimento Médio' icon='ti-timer' col='col-md-3'>
+                                {{ resumoHistorico.mediaTempoAtendimento | miliToMin }}
+                            </card-indicator>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <nav>
+                                            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                                <a style="margin-bottom: -1px; color: #787878;"
+                                                    class="nav-item nav-link active card-title" id="nav-comanda-tab"
+                                                    data-toggle="tab" href="#nav-comanda" role="tab" aria-controls="nav-comanda"
+                                                    aria-selected="true">
+                                                    Comandas Fechadas
+                                                </a>
+                                                <a style="margin-bottom: -1px; color: #787878;"
+                                                    class="nav-item nav-link card-title" id="nav-home-tab"
+                                                    data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home"
+                                                    aria-selected="false">
+                                                    Fechamentos
+                                                </a>
+                                                <a style="margin-bottom: -1px; color: #787878;"
+                                                    class="nav-item nav-link card-title" id="nav-profile-tab"
+                                                    data-toggle="tab" href="#nav-profile" role="tab"
+                                                    aria-controls="nav-profile" aria-selected="false">
+                                                    Produtos
+                                                </a>
+                                            </div>
+                                        </nav>
+                                        <div class="tab-content" id="nav-tabContent">
+                                            <div class="tab-pane fade show active" id="nav-comanda" role="tabpanel"
+                                                aria-labelledby="nav-comanda-tab">
+                                                <div class="table-responsive">
+                                                    <table class="table  table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Comanda</th>
+                                                                <th>Mesa - Identif.</th>
+                                                                <th>Hora Entrada</th>
+                                                                <th>Hora Saída</th>
+                                                                <th class="text-right">Valor</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(comanda, key) in comandasHistorico">
+                                                                <td>{{ comanda.comanda }}</td>
+                                                                <td>{{ comanda.mesa }} - {{ comanda.id }}</td>
+                                                                <td>{{ comanda.dhAberto | formatDate }}</td>
+                                                                <td>
+                                                                    {{ comanda.dhFinalizada | formatTime }}
+                                                                    ({{ tempoEspera(comanda.dhAberto, comanda.dhFinalizada) }})
+                                                                </td>
+                                                                <td class="text-right">
+                                                                    {{ totalComanda(comanda.pedidos) | moeda }}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th colspan="4" class="text-right">Total</th>
+                                                                <th class="text-right">{{ resumoHistorico.total | moeda}}</th>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="nav-home" role="tabpanel"
+                                                aria-labelledby="nav-home-tab">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Data/Hora Fechamento</th>
+                                                                <th>Quantidade Pedidos</th>
+                                                                <th>Tempo Médio Atendimento</th>
+                                                                <th class="text-right">Faturamento</th>
+                                                                <th style="width: 20px; padding: 10px 15px">
+                                                                    <a @click="reportResumoHistorico()"
+                                                                        class="text-primary h3" href="#">
+                                                                        <span class="fas fa-file-csv"></span>
+                                                                    </a>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(dia, key) in historico">
+                                                                <td>{{ dia.dhFechamento | formatDate }}</td>
+                                                                <td>{{ dia.qtdPedidos }}</td>
+                                                                <td>{{ dia.mediaTempoAtendimento | formatDuration }}</td>
+                                                                <td class="text-right">{{ dia.total | moeda }}</td>
+                                                                <td class="text-center"
+                                                                    style="width: 20px; padding: 10px 15px">
+                                                                    <a @click="reportResumo(key)"
+                                                                        class="text-primary h3" href="#">
+                                                                        <span class="fas fa-file-csv"></span>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                        <tfoot>
+                                                            <tr>
+                                                                <th class="text-right" colspan="3">TOTAL</th>
+                                                                <th class="text-right">{{ resumoHistorico.total | moeda}}
+                                                                </th>
+                                                                <th class="text-right"></th>
+                                                            </tr>
+                                                        </tfoot>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                                                aria-labelledby="nav-profile-tab">
+                                                <div class="table-responsive">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Produto</th>
+                                                                <th>Quantidade</th>
+                                                                <th class="text-right">Valor</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr v-for="(produto, key) in resumoHistorico.produtos">
+                                                                <td>{{ produto.desc }}</td>
+                                                                <td>{{ produto.qtd }}</td>
+                                                                <td class="text-right">{{ produto.valor | moeda }}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th class="text-right" colspan="2">TOTAL</th>
+                                                                <th class="text-right">{{ resumoHistorico.total | moeda}}
+                                                                </th>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                    <template v-if="page.selected == 'produtos'">
+                        <div class="row">
+                            <div class="col-md-12 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body pb-2">
+                                        <h4 class="card-title">Cadastro de Produtos</h4>
+                                        <form>
+                                            <div v-if="produto.error != ''" class="form-row">
+                                                <div class="form-group col-md-12">
+                                                    <div class="alert alert-danger" role="alert">
+                                                        {{ produto.error }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-md-6 form-group">
+                                                    <label>Descrição</label>
+                                                    <input v-model="produto.desc" type="text" class="form-control">
+                                                </div>
+                                                <div class="col-md-3 form-group">
+                                                        <label>Necessita Preparo</label>
+                                                        <select v-model="produto.preparo" class="form-control"
+                                                            style="color: black;">
+                                                            <option value="S">Sim</option>
+                                                            <option value="N">Não</option>
+                                                        </select>
+                                                    </div>
+                                                <div class="col-md-3 form-group">
+                                                    <label>Disponível</label>
+                                                    <select v-model="produto.disponivel" class="form-control"
+                                                        style="color: black;">
+                                                        <option value="S">Sim</option>
+                                                        <option value="N">Não</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="form-row">
+                                                <div class="col-md-6 form-group">
+                                                    <label>Categoria</label>
+                                                    <input v-model="produto.categoria" type="text" class="form-control">
+                                                </div>
+                                                <div class="col-md-6 form-group">
+                                                    <label>Valor</label>
+                                                    <currency-input
+                                                        class="form-control"
+                                                        v-model="produto.valor"
+                                                        currency="BRL"
+                                                        locale="pt"/>
+                                                </div>
+
+                                            </div>
+                                            <div class="form-row">
+                                                <a href="#" @click="saveProduto" 
+                                                    class="btn btn-primary mr-2 mb-2">Salvar Produto</a>
+                                                <a href="#" @click="clearProduto" 
+                                                    class="btn btn-light mr-2 mb-2">Limpar</a>
+                                                <a href="#" @click="deleteProduto(produto.categoria, produto.desc)"
+                                                    class="btn btn-danger mb-2">Excluir</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 grid-margin stretch-card">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <input v-model="filter.descProduto" placeholder="Filtrar..." type="text"
+                                            class="form-control">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-striped">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Categoria</th>
+                                                        <th>Descrição</th>
+                                                        <th class="text-center">Preparo</th>
+                                                        <th class="text-center">Disponível</th>
+                                                        <th class="text-right">Valor</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <template v-for='(categoria, keyC) in produtos'>
+                                                        <tr v-for="(produto, keyP) in categoria"
+                                                            v-if="produto.desc.toLowerCase().includes(filter.descProduto.toLowerCase())"
+                                                            @click="editProduto(keyC, produto)">
+                                                            <td>{{ keyC }}</td>
+                                                            <td>{{ produto.desc }}</td>
+                                                            <td v-if="produto.preparo == 'S'"
+                                                                class="text-center text-success">
+                                                                <i class="fas fa-check"></i>
+                                                            </td>
+                                                            <td v-else class="text-center text-danger">
+                                                                <i class="fas fa-times"></i>
+                                                            </td>
+                                                            <td v-if="produto.disponivel == 'S'"
+                                                                class="text-center text-success">
+                                                                <i class="fas fa-check"></i>
+                                                            </td>
+                                                            <td v-else class="text-center text-danger">
+                                                                <i class="fas fa-times"></i>
+                                                            </td>
+                                                            <td class="text-right">{{ produto.valor | moeda}}</td>
+                                                        </tr>
+                                                    </template>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <div v-if="page.selected == 'editUsuario'" class="row">
+                        <div class="col-md-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body pb-2">
+                                    <h4 class="card-title">Gerenciar Usuários</h4>
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-2 form-group">
+                                                <label>Foto</label>
+                                                <div>
+                                                    <img style="height: 148px; width: 148px;" 
+                                                        :src="getProfilePicture(editUsuarioAcesso, 148)" alt="foto">
+                                                </div>
+                                            </div>
+                                            <div class="col-10">
+                                                <div class="form-row">
+                                                    <div class="col-md-12 form-group">
+                                                        <label>Nome</label>
+                                                        <input :disabled="!editUsuarioAcesso.editName" v-model="editUsuarioAcesso.name" type="text"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="form-row">
+                                                    <div class="col-md-10 form-group">
+                                                        <label>E-mail</label>
+                                                        <input disabled v-model="editUsuarioAcesso.email" type="text"
+                                                            class="form-control">
+                                                    </div>
+                                                    <div class="col-md-2 form-group">
+                                                        <label>Administrador</label>
+                                                        <select v-model="editUsuarioAcesso.admin" class="form-control"
+                                                            style="color: black;">
+                                                            <option value="S">Sim</option>
+                                                            <option value="N">Não</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="form-row">
+                                            <a href="#" @click="atualizarAcessoUsuario"
+                                                class="btn btn-primary mr-2 mb-2">Atualizar</a>
+                                            <a href="#" @click="page.selected = 'usuarios'"
+                                                class="btn btn-light mr-2 mb-2">Cancelar</a>
+                                            <a href="#" @click="revogarAcessoUsuario" 
+                                                class="btn btn-danger mb-2">Revogar Acesso</a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-if="page.selected == 'usuarios'" class="row">
+                        <div class="col-lg-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <nav>
+                                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                            <a style="margin-bottom: -1px; color: #787878;"
+                                                class="nav-item nav-link active card-title" id="nav-home-tab"
+                                                data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home"
+                                                aria-selected="true">
+                                                Usuários
+                                            </a>
+                                            <a style="margin-bottom: -1px; color: #787878;"
+                                                class="nav-item nav-link card-title" id="nav-profile-tab"
+                                                data-toggle="tab" href="#nav-profile" role="tab"
+                                                aria-controls="nav-profile" aria-selected="false">
+                                                Solicitações de acesso
+                                            </a>
+                                        </div>
+                                    </nav>
+                                    <div class="tab-content" id="nav-tabContent">
+                                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                                            aria-labelledby="nav-home-tab">
+                                            <div class="table-responsive">
+                                                <table class="table table-hover table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>Nome</th>
+                                                            <th>Email</th>
+                                                            <th class="text-center">Administrador</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for='(user, uid) in acessoUsuarios'
+                                                            @click="editAcessoUsuario(uid, user)">
+                                                            <td class="py-1">
+                                                                <a>
+                                                                    <img :src="getProfilePicture(user)" alt="foto">
+                                                                </a>
+                                                            </td>
+                                                            <td>{{ user.name }}</td>
+                                                            <td>{{ user.email }}</td>
+                                                            <td v-if="user.admin" class="text-center text-success">
+                                                                <i class="fas fa-check"></i>
+                                                            </td>
+                                                            <td v-else class="text-center text-danger">
+                                                                <i class="fas fa-times"></i>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                                            aria-labelledby="nav-profile-tab">
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th></th>
+                                                            <th>Nome</th>
+                                                            <th>Email</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr v-for='(user, uid) in novosUsuarios'>
+                                                            <td class="nav-item pt-1 pb-1">
+                                                                <a class="nav-profile">
+                                                                    <img :src="getProfilePicture(user)" alt="profile">
+                                                                </a>
+                                                            </td>
+                                                            <td>{{ user.name }}</td>
+                                                            <td>{{ user.email }}</td>
+                                                            <td v-if="!filter.confirmNovoUsuario" class="text-right">
+                                                                <button @click="filter.confirmNovoUsuario = true;"
+                                                                    type="button" class="btn btn-inverse-success">
+                                                                    <i class="fas fa-check btn-icon-prepend"></i>
+                                                                    Autorizar
+                                                                </button>
+                                                            </td>
+                                                            <td v-else class="text-right">
+                                                                Confirma a autorização? &nbsp;
+                                                                <div class="btn-group" role="group">
+                                                                    <button @click="darAcessoUsuario(uid, user)"
+                                                                        type="button" class="btn btn-inverse-success">
+                                                                        <i class="fas fa-check"></i>
+                                                                    </button>
+                                                                    <button
+                                                                        @click="filter.confirmNovoUsuario = false;"
+                                                                        type="button" class="btn btn-inverse-danger">
+                                                                        <i class="fas fa-times"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div v-if="page.selected == 'config'" class="row">
+                        <div class="col-md-12 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body pb-2">
+                                    <h4 class="card-title">Configurações</h4>
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-sm-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-12 mb-0">
+                                                        Trabalhar com comandas:</label>                                                   
+                                                        <div class="form-check ml-3">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" 
+                                                                    name="radioComanda"
+                                                                    v-model="config.comanda"
+                                                                    @change="atualizarConfig"
+                                                                    value="S">
+                                                                Sim
+                                                                <i class="input-helper"></i>
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check  ml-3">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" 
+                                                                    name="radioComanda"
+                                                                    v-model="config.comanda"
+                                                                    @change="atualizarConfig"
+                                                                    value="N">
+                                                                Não
+                                                                <i class="input-helper"></i>
+                                                            </label>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <div class="form-group row">
+                                                    <label class="col-sm-12 mb-0">
+                                                        Etapas Atendimento:</label>                                                   
+                                                        <div class="form-check ml-3">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" 
+                                                                    name="radioEtapas"
+                                                                    v-model="config.etapas"
+                                                                    @change="atualizarConfig"
+                                                                    value="3">
+                                                                Atendimento > Disponível > Finalizado
+                                                                <i class="input-helper"></i>
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check  ml-3">
+                                                            <label class="form-check-label">
+                                                                <input type="radio" class="form-check-input" 
+                                                                    name="radioEtapas"
+                                                                    v-model="config.etapas"
+                                                                    @change="atualizarConfig"
+                                                                    value="2">
+                                                                    Atendimento > Finalizado
+                                                                <i class="input-helper"></i>
+                                                            </label>
+                                                        </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- content-wrapper ends -->
+                <!-- partial:partials/_footer.html -->
+                <footer class="footer hide-only-mobile">
+                    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+                        <span
+                            class="float-none float-sm-right text-muted text-center text-sm-left d-block d-sm-inline-block"></span>
+                        <span class="float-none float-sm-right text-muted d-block mt-1 mt-sm-0 text-center">Copyright ©
+                            2019 <a href="https://www.afoxsoftware.com.br/" target="_blank">AFox Software</a>. Todos
+                            direitos reservados.</span>
+                    </div>
+                </footer>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    </div>
+    
+    <script src="index.js"></script>
+    
+</body>
+
+</html>

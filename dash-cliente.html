@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="css/style.css">
+        <script>
+            var CLIENTE = 'retro-sports-bar';
+        </script>
+        <script src="js/script.js"></script>   
+       <style>
+
+        @font-face {
+        font-family: Santana-Black;
+        src: url('fonts/santana-black.woff2') format('woff2'),
+            url('fonts/santana-black.woff') format('woff');
+        }
+
+        @font-face {
+        font-family: Jersey;
+        src: url('fonts/all-star.ttf') format('truetype');
+        }
+
+        @font-face {
+        font-family: Varsity;
+        src: url('fonts/varsity-regular.woff') format('truetype');
+        }
+       
+       .bg-dash{
+            background-image: url('images/bg-dash-cliente.jpg');
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .camiseta{
+            background-image: url('images/camiseta-amarela.png');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;            
+        }
+
+        .font-santana-black{
+            font-family: Santana-Black, sans-serif; 
+	    	text-transform: uppercase;
+        }
+
+        .font-varsity{
+            font-family: Varsity, sans-serif; 
+	    	text-transform: uppercase;
+            color: green
+        }
+
+        .font-jersey{
+            font-family: Jersey, sans-serif; 
+	    	text-transform: uppercase;
+        }
+       
+       </style>
+    </head>
+    <body>
+        <div id="conteudo" v-cloak>                
+            <div class="bg-dash d-flex justify-content-around align-items-center flex-wrap" style="padding: 5%; min-height: 100%; height: 100%;">
+                <section class="stage" v-for="(pedido, key) in pedidosDisponiveis" style="margin: 30px">
+                    <div class="camiseta" style="height: 200px; width: 200px;">
+                        <div class="d-flex align-items-top" style="height: 100%; width: 100%;" :id="key">
+                            <div style="width: 100%;">
+                                <div class="row">
+                                    <div class="col-12 text-center font-varsity">
+                                        <h1 style="font-size: 72px; margin-top: 30px;">{{ pedido.mesa }}</h1>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </div>
+                    </div>
+                    <div class="row ">
+                        <div class="col-12 text-center text-white font-santana-black">   
+                            <h1 style=" background-color: rgba(49, 49, 49, 0.863)">{{ pedido.id }}</h1>
+                        </div>
+                    </div>
+                </section>               
+                                     
+            </div>     
+        </div>
+        <script src="dash-cliente.js"></script>
+    </body>
+</html>

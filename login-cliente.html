@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Retrô Sport Pub</title>
+  <meta name="theme-color" content="#dddce1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="/retro-sport-pub/manifest.json">
+  <link rel="shortcut icon" href="images/favicon.png" />
+  <script>
+      var CLIENTE = 'retro-sports-bar';
+  </script>
+  <script src="js/script.js?2019"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class="container-scroller" id="login" v-cloak>
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+        <div class="row flex-grow">
+            <div class="col-lg-6 login-half-bg d-flex align-items-center justify-content-between flex-column"
+            style="background: url(images/bg-login.jpg); background-size: cover;">
+            <p>.</p>
+            <div style="padding-bottom: 10%; width: 50%;">
+             <img src="images/logo.png" style="width: 100%;" alt="logo">
+           </div>
+         <p class="text-white font-weight-medium text-center ">Copyright &copy; 2019  Todos direitos reservados.</p>
+       </div>
+          <div class="col-lg-6 d-flex align-items-center justify-content-center">
+            <div class="auth-form-transparent text-left p-3">             
+              <h4>Bem vindo ao Retrô!</h4>
+              <h5><a href="#" @click="logout">logout</a></h5>
+              <form class="pt-3">
+                <div v-if="error != ''" class="form-group" >
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                </div> 
+                <div>
+                    <label>Para pedir acesse com o seu&nbsp;</label>
+                </div>            
+                
+                <a href="#" @click="loginFacebook" class="btn btn-social-icon-text btn-facebook text-white">
+                <i class="ti-facebook"></i>
+                  Facebook</a></div>
+                  
+              </form>
+              
+            </div>
+            
+          </div>
+          
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <script src="login-cliente.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Retrô Sport Pub</title>
+  <meta name="theme-color" content="#dddce1">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="/retro-sport-pub/manifest.json">
+  <link rel="shortcut icon" href="images/favicon.png" />
+  <script>
+      var CLIENTE = 'retro-sports-bar';
+  </script>
+  <script src="js/script.js?2019"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+  <div class="container-scroller" id="login" v-cloak>
+    <div class="container-fluid page-body-wrapper full-page-wrapper">
+      <div class="content-wrapper d-flex align-items-stretch auth auth-img-bg">
+        <div class="row flex-grow">
+            <div class="col-lg-6 login-half-bg d-flex align-items-center justify-content-between flex-column"
+            style="background: url(images/bg-login.jpg); background-size: cover;">
+            <p>.</p>
+            <div style="padding-bottom: 10%; width: 50%;">
+             <img src="images/logo.png" style="width: 100%;" alt="logo">
+           </div>
+         <p class="text-white font-weight-medium text-center ">Copyright &copy; 2019  Todos direitos reservados.</p>
+       </div>
+          <div class="col-lg-6 d-flex align-items-center justify-content-center">
+            <div class="auth-form-transparent text-left p-3">             
+              <h4>Acesso ao sistema.</h4>
+              <form class="pt-3">
+                <div v-if="error != ''" class="form-group" >
+                    <div class="alert alert-danger" role="alert">
+                        {{ error }}
+                    </div>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputEmail">E-mail</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend bg-transparent">
+                      <span class="input-group-text bg-transparent border-right-0">
+                        <i class="ti-user text-primary"></i>
+                      </span>
+                    </div>
+                    <input v-model="email" type="text" class="form-control form-control-lg border-left-0" id="exampleInputEmail" placeholder="E-mail">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="exampleInputPassword">Senha</label>
+                  <div class="input-group">
+                    <div class="input-group-prepend bg-transparent">
+                      <span class="input-group-text bg-transparent border-right-0">
+                        <i class="ti-lock text-primary"></i>
+                      </span>
+                    </div>
+                    <input @keyup.enter="login" v-model="password" type="password" class="form-control form-control-lg border-left-0" id="exampleInputPassword" placeholder="Senha">                        
+                  </div>
+                </div>
+                <div v-if="mode != 'login'" class="form-group">
+                    <label for="exampleInputPassword">Confirmar Senha</label>
+                    <div class="input-group">
+                      <div class="input-group-prepend bg-transparent">
+                        <span class="input-group-text bg-transparent border-right-0">
+                          <i class="ti-lock text-primary"></i>
+                        </span>
+                      </div>
+                      <input v-model="confirmPassword" type="password" class="form-control form-control-lg border-left-0" id="exampleInputPassword" placeholder="Senha">                        
+                    </div>
+                  </div>
+                <div class="my-3">
+                  <a v-if="mode == 'login'" @click="login"
+                    class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" href="#">
+                    <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    LOGAR</a>
+                  <div v-if="mode == 'login'" class="mt-3 d-flex justify-content-center align-items-center">
+                    <span>Acesse com o seu&nbsp;</span>
+                    <a href="#" @click="loginFacebook" class="btn btn-social-icon-text btn-facebook text-white">
+                      <i class="ti-facebook"></i>
+                      Facebook</a></div>
+                  <a v-else @click="cadastrar"
+                    class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" href="#">
+                    <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    SOLICITAR</a>
+                </div>
+                <div class="text-center mt-4 font-weight-light">
+                    <a v-if="mode == 'login'" @click="mode = 'cadastro'" href="#" class="text-primary">Solicitar acesso.</a>
+                    <a v-else @click="mode = 'login'" href="#" class="text-primary">Logar.</a>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      <!-- content-wrapper ends -->
+    </div>
+    <!-- page-body-wrapper ends -->
+  </div>
+  <script src="login.js"></script>
+</body>
+
+</html>
