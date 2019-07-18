@@ -1,4 +1,6 @@
 import Vue from 'vue';
+import {fbMx, utilMx} from './js/script.js';
+import moment from 'moment';
 import './js/script.js';
 import './style.css';
 
