@@ -1,5 +1,8 @@
 import Vue from 'vue';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import 'firebase/database';
+import jQuery from 'jquery';
 
 /* mousetrap v1.6.3 craig.is/killing/mice */
 (function(q,u,c){function v(a,b,g){a.addEventListener?a.addEventListener(b,g,!1):a.attachEvent("on"+b,g)}function z(a){if("keypress"==a.type){var b=String.fromCharCode(a.which);a.shiftKey||(b=b.toLowerCase());return b}return n[a.which]?n[a.which]:r[a.which]?r[a.which]:String.fromCharCode(a.which).toLowerCase()}function F(a){var b=[];a.shiftKey&&b.push("shift");a.altKey&&b.push("alt");a.ctrlKey&&b.push("ctrl");a.metaKey&&b.push("meta");return b}function w(a){return"shift"==a||"ctrl"==a||"alt"==a||
