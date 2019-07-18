@@ -1,4 +1,6 @@
-
+import Vue from 'vue';
+import './js/script.js';
+import './style.css';
 
 var COMANDA_ATENDENDO = "comandas/aberto/atendendo/";
 var ABERTO = 'pedidos/aberto/';
